@@ -1,23 +1,24 @@
 const { admin, db } = require('../config/admin')
 
-const registrationToken = 'FCM TOKEN of target device'
-
-
 const options = {
     priority: "high"
 }
 
 const sendNotification = (req, res, next) => {
-    const { deviceToken, title, body,  } = req.body
+    const { deviceToken, title, body } = req.body
     console.log('send');
-    admin.messaging().sendToDevice(deviceToken, {
+    admin.messaging().send({
+        token: deviceToken,
         notification: {
-            title: "FCM Mantap",
-            body: "Notification has been recieved",
-            content_available: "true",
-            image: "https://i.ytimg.com/vi/iosNuIdQoy8/maxresdefault.jpg"
-        }
-    }, options)
+          title: title || "Ini default titlenya coy.",
+          body: body || "Kalo ini mah default body. Kirim payload title dan body custom-mu!"
+        },
+        android: {
+          notification: {
+            sound: "default"
+          }
+        },
+      })
         .then(function (response) {
             res.status(200).json({message: 'berhasil ngirim!'})
         })
